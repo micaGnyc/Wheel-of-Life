@@ -8,6 +8,28 @@ import { Card } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ChevronDown } from "lucide-react"
 
+// Add animation styles
+const wheelAnimationStyles = `
+  @keyframes grow-segment {
+    0% {
+      transform: scale(0);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 0.8;
+    }
+  }
+`
+
+// Inject styles into document
+if (typeof document !== 'undefined' && !document.querySelector('#wheel-animation-styles')) {
+  const styleEl = document.createElement('style')
+  styleEl.id = 'wheel-animation-styles'
+  styleEl.textContent = wheelAnimationStyles
+  document.head.appendChild(styleEl)
+}
+
 type Domain = "family" | "friends" | "school" | "work" | "living" | "self" | "overall"
 
 const questions = [
@@ -292,6 +314,7 @@ export default function LifeSatisfactionAssessment() {
               <div className="mb-12 flex justify-center">
                 <div className="relative w-full max-w-2xl">
                   <svg viewBox="0 0 400 400" className="h-auto w-full">
+                    {/* Existing subtle grid lines */}
                     {[1, 2, 3, 4, 5, 6, 7].map((ring) => (
                       <circle
                         key={ring}
@@ -350,6 +373,10 @@ export default function LifeSatisfactionAssessment() {
                         const labelX = 200 + labelRadius * Math.cos(labelAngleRad)
                         const labelY = 200 + labelRadius * Math.sin(labelAngleRad)
 
+                        // Animation parameters
+                        const animationDuration = 0.8
+                        const animationDelay = index * 0.1
+
                         return (
                           <g key={q.domain}>
                             {[0.25, 0.5, 0.75].map((marker) => {
@@ -386,8 +413,19 @@ export default function LifeSatisfactionAssessment() {
                               strokeWidth="1.5"
                             />
 
-                            {/* Filled segment */}
-                            {pathData && <path d={pathData} fill={color} opacity="0.8" />}
+                            {/* Filled segment with animation */}
+                            {pathData && (
+                              <path
+                                d={pathData}
+                                fill={color}
+                                opacity="0.8"
+                                style={{
+                                  transformOrigin: "200px 200px",
+                                  transform: "scale(0)",
+                                  animation: `grow-segment ${animationDuration}s ${animationDelay}s ease-out forwards`,
+                                }}
+                              />
+                            )}
 
                             {/* Label text */}
                             <text
@@ -404,9 +442,26 @@ export default function LifeSatisfactionAssessment() {
                         )
                       })}
 
-                    <circle cx="200" cy="200" r="180" fill="none" stroke="black" strokeWidth="2" />
+                    {/* NEW: VISIBLE GRID MARKERS at 25%, 50%, 75% - MOVED TO RENDER ON TOP */}
+                    {[0.25, 0.5, 0.75].map((fraction) => (
+                      <circle
+                        key={`grid-${fraction}`}
+                        cx="200"
+                        cy="200"
+                        r={180 * fraction}
+                        fill="none"
+                        stroke="#888888"
+                        strokeWidth="2"
+                        strokeDasharray="5 5"
+                        opacity="0.6"
+                      />
+                    ))}
 
+                    {/* Outer black border */}
+                    <circle cx="200" cy="200" r="180" fill="none" stroke="black" strokeWidth="2" />
+                    {/* Center dot */}
                     <circle cx="200" cy="200" r="3" fill="hsl(var(--foreground))" />
+
                   </svg>
                 </div>
               </div>
