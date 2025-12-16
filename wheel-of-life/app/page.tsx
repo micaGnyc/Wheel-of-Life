@@ -95,7 +95,15 @@ const satisfactionOptions = [
 ]
 
 export default function LifeSatisfactionAssessment() {
+  const [customArea, setCustomArea] = useState<{name: string, score: number | null}>({name: "", score: null})
+  const [whatMatters, setWhatMatters] = useState<string[]>([])
+  const [focusAreas, setFocusAreas] = useState<string[]>([])
+  const [deepDive, setDeepDive] = useState<Record<string, {why: string, whatBetter: string}>>({})
+  const [showReport, setShowReport] = useState(false)  
   const [age, setAge] = useState("")
+  const [gender, setGender] = useState("")
+const [ethnicity, setEthnicity] = useState("")
+const [optionalNotes, setOptionalNotes] = useState("")
   const [responses, setResponses] = useState<Record<Domain, number | null>>({
     family: null,
     friends: null,
@@ -154,10 +162,15 @@ export default function LifeSatisfactionAssessment() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
-      <div className="flex justify-center pt-8">
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg">
-          <svg viewBox="0 0 24 24" className="h-10 w-10" fill="none">
+<div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
+  
+  {/* Hero Section */}
+  <section className="relative flex min-h-screen flex-col items-center justify-center px-4 py-12">
+    <div className="mx-auto max-w-4xl text-center">
+      
+      <div className="flex flex-col items-center gap-3 mb-8">
+        <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg">
+          <svg viewBox="0 0 24 24" className="h-16 w-16" fill="none">
             <circle cx="12" cy="12" r="11" fill="white" opacity="0.2" />
             <path
               d="M12 6 L12 18 M8 10 L12 6 L16 10"
@@ -168,19 +181,32 @@ export default function LifeSatisfactionAssessment() {
             />
           </svg>
         </div>
+        <div className="inline-block rounded-full bg-primary/10 px-8 py-3 text-lg font-semibold text-primary">
+          Future Coach
+        </div>
       </div>
+      
+      <h1 className="mb-6 text-balance font-sans text-5xl font-bold tracking-tight text-foreground md:text-7xl">
+        Wheel of Life
+      </h1>
 
-      {/* Hero Section */}
-      <section className="relative flex min-h-screen flex-col items-center justify-center px-4 py-20">
-        <div className="mx-auto max-w-4xl text-center">
-          <div className="mb-8 inline-block rounded-full bg-primary/10 px-6 py-2 text-sm font-semibold text-primary">
-            Future Coach
-          </div>
-          <h1 className="mb-6 text-balance font-sans text-5xl font-bold tracking-tight text-foreground md:text-7xl">
-            Build Your Future with Self-Discovery
-          </h1>
-          <p className="mb-12 text-pretty text-xl text-muted-foreground md:text-2xl">Find Balance and Success</p>
 
+          <p className="mb-12 text-pretty text-xl text-muted-foreground md:text-2xl">See Where You Are, Choose Where You're Going</p>
+          <div className="mx-auto mb-8 max-w-2xl text-left">
+  <p className="mb-4 text-lg font-semibold">A couple things to know before you start:</p>
+  
+  <p className="mb-4 text-base text-muted-foreground">
+    <strong>This is about how happy *you* are, not how well others think you're doing.</strong> For example, you might be succeeding in school—getting good grades—but still feel unsatisfied with your overall school experience. Or you might be just barely passing but have found your calling in theater and feel very satisfied with school. We want to capture how you actually feel—not how you think you "should" feel.
+  </p>
+  
+  <p className="mb-8 text-base text-muted-foreground">
+    <strong>This is a snapshot of right now.</strong> Not a report card on your whole life. Just where you are today. Your wheel will change over time—that's the point! This is your starting point.
+  </p>
+  
+  <p className="text-base text-muted-foreground">
+    Ready? Let's start with your age.
+  </p>
+</div>
           <Card className="mx-auto mb-8 max-w-md bg-card/80 p-8 shadow-lg backdrop-blur-sm">
             <Label htmlFor="age" className="mb-2 block text-left text-sm font-medium">
               What's your age? (16-24)
@@ -195,12 +221,101 @@ export default function LifeSatisfactionAssessment() {
               placeholder="Enter your age"
               className="mb-4 text-lg"
             />
+            {/* Demographics - shows after age is entered */}
+  {age && (
+    <>
+      <h3 className="mb-4 mt-6 text-lg font-semibold">A bit more about you</h3>
+      
+    {/* Gender */}
+    <div className="mb-4">
+      <Label className="mb-2 block text-left text-sm font-medium">
+        How do you identify (gender)? (Check all that apply)
+      </Label>
+      <div className="space-y-2">
+        {[
+          { value: "female", label: "Female" },
+          { value: "male", label: "Male" },
+          { value: "nonbinary", label: "Non-binary" },
+          { value: "self-describe", label: "Prefer to self-describe" },
+          { value: "no-say", label: "Prefer not to say" },
+        ].map((option) => (
+          <div key={option.value} className="flex items-center gap-2">
+            <Checkbox
+              id={`gender-${option.value}`}
+              checked={gender.includes(option.value)}
+              onCheckedChange={(checked) => {
+                if (checked) {
+                  setGender([...gender, option.value])
+                } else {
+                  setGender(gender.filter((g) => g !== option.value))
+                }
+              }}
+            />
+            <Label htmlFor={`gender-${option.value}`} className="cursor-pointer text-sm">
+              {option.label}
+            </Label>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Ethnicity */}
+    <div className="mb-4">
+      <Label className="mb-2 block text-left text-sm font-medium">
+        How do you identifyrace/ethnicity? (Check all that apply)
+      </Label>
+      <div className="space-y-2">
+        {[
+          { value: "asian", label: "Asian" },
+          { value: "black", label: "Black or African American" },
+          { value: "hispanic", label: "Hispanic or Latino" },
+          { value: "native-american", label: "Native American or Alaska Native" },
+          { value: "pacific-islander", label: "Native Hawaiian or Pacific Islander" },
+          { value: "white", label: "White" },
+          { value: "two-or-more", label: "Two or more races" },
+          { value: "no-say", label: "Prefer not to say" },
+        ].map((option) => (
+          <div key={option.value} className="flex items-center gap-2">
+            <Checkbox
+              id={`ethnicity-${option.value}`}
+              checked={ethnicity.includes(option.value)}
+              onCheckedChange={(checked) => {
+                if (checked) {
+                  setEthnicity([...ethnicity, option.value])
+                } else {
+                  setEthnicity(ethnicity.filter((e) => e !== option.value))
+                }
+              }}
+            />
+            <Label htmlFor={`ethnicity-${option.value}`} className="cursor-pointer text-sm">
+              {option.label}
+            </Label>
+          </div>
+        ))}
+      </div>
+    </div>
+      {/* Optional Notes */}
+      <div className="mb-6">
+        <Label htmlFor="notes" className="mb-2 block text-left text-sm font-medium">
+          Anything else we should know? (Optional)
+        </Label>
+        <Input
+          id="notes"
+          type="text"
+          placeholder="e.g., school name, partner's name for testing..."
+          value={optionalNotes}
+          onChange={(e) => setOptionalNotes(e.target.value)}
+          className="w-full"
+        />
+      </div>
+    </>
+  )}
             <Button
               onClick={scrollToAssessment}
               size="lg"
               className="w-full bg-primary text-lg font-semibold text-primary-foreground hover:bg-primary/90"
             >
-              Start Assessment
+              Start Exercise
             </Button>
           </Card>
 
@@ -233,15 +348,34 @@ export default function LifeSatisfactionAssessment() {
               const isNotApplicable = notApplicable[q.domain]
               return (
                 <Card key={q.domain} className="bg-card p-6 shadow-md transition-shadow hover:shadow-lg md:p-8">
-                  <div className="mb-4 flex items-center gap-3">
-                    <span className="text-3xl" aria-hidden="true">
-                      {q.emoji}
-                    </span>
-                    <div>
-                      <h3 className="text-lg font-semibold text-card-foreground">{q.label}</h3>
-                      <p className="text-sm text-muted-foreground">{q.question}</p>
-                    </div>
-                  </div>
+                <div className="mb-4">
+  {/* Top row: emoji, label, and checkbox inline */}
+  <div className="flex items-center gap-3 mb-2">
+    <span className="text-3xl" aria-hidden="true">
+      {q.emoji}
+    </span>
+    <h3 className="text-lg font-semibold text-card-foreground">{q.label}</h3>
+    
+    {/* Not applicable checkbox right after label */}
+    {q.hasNotApplicable && (
+      <div className="flex items-center gap-2 ml-2">
+        <Checkbox
+          id={`na-${q.domain}`}
+          checked={isNotApplicable}
+          onCheckedChange={(checked) => handleNotApplicableChange(q.domain, checked as boolean)}
+        />
+        <Label htmlFor={`na-${q.domain}`} className="cursor-pointer text-xs text-muted-foreground whitespace-nowrap">
+          N/A
+        </Label>
+      </div>
+    )}
+  </div>
+  
+  {/* Question text below */}
+  <p className="text-sm text-muted-foreground ml-12">{q.question}</p>
+</div>
+
+
 
                   <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-4 md:grid-cols-7">
                     {satisfactionOptions.map((option) => (
@@ -263,18 +397,7 @@ export default function LifeSatisfactionAssessment() {
                     ))}
                   </div>
 
-                  {q.hasNotApplicable && (
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        id={`na-${q.domain}`}
-                        checked={isNotApplicable}
-                        onCheckedChange={(checked) => handleNotApplicableChange(q.domain, checked as boolean)}
-                      />
-                      <Label htmlFor={`na-${q.domain}`} className="cursor-pointer text-sm text-muted-foreground">
-                        Not applicable
-                      </Label>
-                    </div>
-                  )}
+                  
                 </Card>
               )
             })}
@@ -289,6 +412,64 @@ export default function LifeSatisfactionAssessment() {
               </ul>
             </Card>
           )}
+{/* Custom Life Area */}
+<Card className="bg-card p-6 shadow-md md:p-8">
+  <div className="mb-4">
+    <h3 className="text-lg font-semibold text-card-foreground">
+      Is there a life area important to you not represented above?
+    </h3>
+    <p className="text-sm text-muted-foreground">Optional - add your own area</p>
+  </div>
+  
+  <div className="mb-4">
+    <Label htmlFor="custom-area-name" className="mb-2 block text-left text-sm font-medium">
+      If yes, what is it?
+    </Label>
+    <Input
+      id="custom-area-name"
+      type="text"
+      placeholder="e.g., Health, Finances, Hobbies, Spirituality..."
+      value={customArea.name}
+      onChange={(e) => setCustomArea({...customArea, name: e.target.value})}
+      className="w-full"
+    />
+  </div>
+
+  {/* Only show satisfaction scale if they entered a custom area name */}
+  {customArea.name && (
+    <div>
+      <Label className="mb-2 block text-left text-sm font-medium">
+        How satisfied are you with your {customArea.name.toLowerCase()}?
+      </Label>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 md:grid-cols-7">
+        {[
+          { value: 1, emoji: "😭", label: "Terrible" },
+          { value: 2, emoji: "☹️", label: "Unhappy" },
+          { value: 3, emoji: "😕", label: "Mostly Dissatisfied" },
+          { value: 4, emoji: "😐", label: "Mixed" },
+          { value: 5, emoji: "🙂", label: "Mostly Satisfied" },
+          { value: 6, emoji: "😊", label: "Pleased" },
+          { value: 7, emoji: "🤩", label: "Delighted" },
+        ].map((option) => (
+          <button
+            key={option.value}
+            onClick={() => setCustomArea({...customArea, score: option.value})}
+            className={`flex flex-col items-center gap-2 rounded-xl border-2 p-3 text-center transition-all ${
+              customArea.score === option.value
+                ? "border-primary bg-primary text-primary-foreground shadow-md"
+                : "border-border bg-background hover:border-primary/50 hover:bg-muted"
+            } cursor-pointer`}
+          >
+            <span className="text-2xl" aria-hidden="true">
+              {option.emoji}
+            </span>
+            <span className="text-xs font-medium leading-tight">{option.label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  )}
+</Card>
 
           <div className="mt-12 text-center">
             <Button
@@ -307,9 +488,13 @@ export default function LifeSatisfactionAssessment() {
         <section id="results" className="px-4 py-20">
           <div className="mx-auto max-w-4xl">
             <Card className="bg-gradient-to-br from-primary/10 to-accent/10 p-8 shadow-xl md:p-12">
-              <h2 className="mb-8 text-center text-3xl font-bold text-foreground md:text-4xl">
-                Your Life Satisfaction Wheel
-              </h2>
+            <h2 className="mb-4 text-center text-3xl font-bold text-foreground md:text-4xl">
+  Your Life Satisfaction Wheel
+</h2>
+<p className="mb-8 text-center text-lg text-muted-foreground">
+  Amazing work! 🎉 You've just completed your Wheel of Life. What you're seeing is a snapshot of your life right now—where you feel satisfied and where there's room to grow.
+</p>
+
 
               <div className="mb-12 flex justify-center">
                 <div className="relative w-full max-w-2xl">
@@ -328,14 +513,20 @@ export default function LifeSatisfactionAssessment() {
                       />
                     ))}
 
-                    {questions
-                      .filter((q) => !notApplicable[q.domain])
-                      .map((q, index, arr) => {
-                        const score = responses[q.domain] || 0
-                        const percentage = score / 7
-                        const segmentAngle = 360 / arr.length
-                        const startAngle = index * segmentAngle - 90
-                        const endAngle = startAngle + segmentAngle
+{[
+  ...questions.filter((q) => !notApplicable[q.domain] && q.domain !== "overall"),
+  ...(customArea.name && customArea.score ? [{
+    domain: "custom",
+    emoji: "⭐",
+    label: customArea.name,
+    question: `My satisfaction with ${customArea.name.toLowerCase()}`
+  }] : [])
+].map((q, index, arr) => {
+const score = q.domain === "custom" ? (customArea.score || 0) : (responses[q.domain] || 0)
+const percentage = score / 7
+const segmentAngle = 360 / arr.length
+const startAngle = index * segmentAngle - 90
+const endAngle = startAngle + segmentAngle
 
                         const gradientColors = [
                           "hsl(330, 100%, 70%)", // Pink/Magenta - Family
@@ -457,8 +648,9 @@ export default function LifeSatisfactionAssessment() {
                       />
                     ))}
 
-                    {/* Outer black border */}
-                    <circle cx="200" cy="200" r="180" fill="none" stroke="black" strokeWidth="2" />
+                    {/* Outer border - lightened */}
+<circle cx="200" cy="200" r="180" fill="none" stroke="#cccccc" strokeWidth="1" />
+
                     {/* Center dot */}
                     <circle cx="200" cy="200" r="3" fill="hsl(var(--foreground))" />
 
@@ -466,25 +658,161 @@ export default function LifeSatisfactionAssessment() {
                 </div>
               </div>
 
-              <div className="rounded-xl bg-card p-6 text-center md:p-8">
-                <p className="text-pretty text-base leading-relaxed text-card-foreground md:text-lg">
-                  Amazing work! 🎉 You've just completed your Life Satisfaction Wheel. What you're seeing is a snapshot
-                  of your life right now—where you feel satisfied and where there's room to grow. Through this
-                  reflection, you've uncovered the gaps between where you are and where you want to be. That clarity?
-                  That's power.
-                </p>
-                <p className="mt-4 text-pretty text-base leading-relaxed text-card-foreground md:text-lg">
-                  Take a moment with your wheel. Notice the shape—is it balanced or lopsided? Which area matters most to
-                  you right now? This wheel isn't just a picture; it's your starting point for real change. Think about
-                  what actions you could take today to improve your priority area, and consider working with a Future
-                  Coach to create a plan that actually works for your life. You've got what it takes to build the life
-                  you want—we're here to help you get there.
-                </p>
+          {/* Prioritization Questions - show after wheel, before report */}
+          {!showReport ? (
+            <div className="space-y-8">
+              {/* Intro text */}
+    <p className="text-center text-base text-muted-foreground">
+      Continue reflecting through these questions to get your personalized Wheel of Life report.
+    </p>
+              {/* Q2: What Matters Most */}
+              <div className="rounded-xl bg-card p-6 md:p-8">
+                <h3 className="mb-4 text-lg font-semibold">Which areas matter most to you right now?</h3>
+                <p className="mb-4 text-sm text-muted-foreground">Select 2-3 areas</p>
+                <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+                  {[
+                    ...questions.filter(q => q.domain !== "overall" && !notApplicable[q.domain]),
+                    ...(customArea.name ? [{ domain: "custom", label: customArea.name, emoji: "⭐" }] : [])
+                  ].map((q) => (
+                    <button
+                      key={q.domain}
+                      onClick={() => {
+                        if (whatMatters.includes(q.domain)) {
+                          setWhatMatters(whatMatters.filter(d => d !== q.domain))
+                        } else if (whatMatters.length < 3) {
+                          setWhatMatters([...whatMatters, q.domain])
+                        }
+                      }}
+                      className={`flex items-center gap-2 rounded-lg border-2 p-3 text-left transition-all ${
+                        whatMatters.includes(q.domain)
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <span className="text-xl">{q.emoji}</span>
+                      <span className="text-sm font-medium">{q.label}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </Card>
-          </div>
-        </section>
-      )}
+
+              {/* Q3: Focus Areas */}
+              <div className="rounded-xl bg-card p-6 md:p-8">
+                <h3 className="mb-4 text-lg font-semibold">Which area(s) do you want to work on?</h3>
+                <p className="mb-4 text-sm text-muted-foreground">Select 1-2 areas</p>
+                <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+                  {[
+                    ...questions.filter(q => q.domain !== "overall" && !notApplicable[q.domain]),
+                    ...(customArea.name ? [{ domain: "custom", label: customArea.name, emoji: "⭐" }] : [])
+                  ].map((q) => (
+                    <button
+                      key={q.domain}
+                      onClick={() => {
+                        if (focusAreas.includes(q.domain)) {
+                          setFocusAreas(focusAreas.filter(d => d !== q.domain))
+                          // Also remove from deepDive
+                          const newDeepDive = {...deepDive}
+                          delete newDeepDive[q.domain]
+                          setDeepDive(newDeepDive)
+                        } else if (focusAreas.length < 2) {
+                          setFocusAreas([...focusAreas, q.domain])
+                          // Initialize deepDive for this area
+                          setDeepDive({...deepDive, [q.domain]: {why: "", whatBetter: ""}})
+                        }
+                      }}
+                      className={`flex items-center gap-2 rounded-lg border-2 p-3 text-left transition-all ${
+                        focusAreas.includes(q.domain)
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-primary/50"
+                      }`}
+                    >
+                      <span className="text-xl">{q.emoji}</span>
+                      <span className="text-sm font-medium">{q.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Q4: Deep Dive - for each focus area */}
+              {focusAreas.map((areaKey) => {
+                const area = areaKey === "custom" 
+                  ? { domain: "custom", label: customArea.name, emoji: "⭐" }
+                  : questions.find(q => q.domain === areaKey)
+                
+                if (!area) return null
+                
+                return (
+                  <div key={areaKey} className="rounded-xl bg-card p-6 md:p-8">
+                    <h3 className="mb-4 text-lg font-semibold flex items-center gap-2">
+                      <span>{area.emoji}</span>
+                      Tell us more about {area.label}
+                    </h3>
+                    
+                    <div className="mb-4">
+                      <Label className="mb-2 block text-sm font-medium">
+                        Why do you want to work on {area.label.toLowerCase()}?
+                      </Label>
+                      <textarea
+                        value={deepDive[areaKey]?.why || ""}
+                        onChange={(e) => setDeepDive({
+                          ...deepDive, 
+                          [areaKey]: {...deepDive[areaKey], why: e.target.value}
+                        })}
+                        placeholder="What's motivating you to focus here..."
+                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm min-h-[80px] ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="mb-2 block text-sm font-medium">
+                        What would "better" look like in {area.label.toLowerCase()}?
+                      </Label>
+                      <textarea
+                        value={deepDive[areaKey]?.whatBetter || ""}
+                        onChange={(e) => setDeepDive({
+                          ...deepDive, 
+                          [areaKey]: {...deepDive[areaKey], whatBetter: e.target.value}
+                        })}
+                        placeholder="Describe what improvement would look like for you..."
+                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm min-h-[80px] ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      />
+                    </div>
+                  </div>
+                )
+              })}
+
+              {/* Generate Report Button */}
+              <div className="text-center">
+                <Button
+                  onClick={() => setShowReport(true)}
+                  disabled={focusAreas.length === 0 || whatMatters.length === 0}
+                  size="lg"
+                  className="bg-accent px-12 text-lg font-semibold text-accent-foreground shadow-lg hover:bg-accent/90"
+                >
+                  Generate My Report
+                </Button>
+                {(focusAreas.length === 0 || whatMatters.length === 0) && (
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Please select what matters and what you want to work on
+                  </p>
+                )}
+              </div>
+            </div>
+          ) : (
+            /* Report Section - placeholder for now */
+            <div className="rounded-xl bg-card p-6 text-center md:p-8">
+              <h3 className="mb-4 text-xl font-semibold">Your Personalized Report</h3>
+              <p className="text-muted-foreground">
+                Report will be generated here using Claude AI...
+              </p>
+              {/* We'll add the actual report display in the next step */}
+            </div>
+          )}
+
+        </Card>
+      </div>
+    </section>
+  )}
 
       {/* Footer Spacing */}
       <div className="h-20" />
