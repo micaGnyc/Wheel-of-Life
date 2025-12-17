@@ -101,8 +101,8 @@ export default function LifeSatisfactionAssessment() {
   const [deepDive, setDeepDive] = useState<Record<string, {why: string, whatBetter: string}>>({})
   const [showReport, setShowReport] = useState(false)  
   const [age, setAge] = useState("")
-  const [gender, setGender] = useState("")
-const [ethnicity, setEthnicity] = useState("")
+  const [gender, setGender] = useState<string[]>([])
+const [ethnicity, setEthnicity] = useState<string[]>([])
 const [optionalNotes, setOptionalNotes] = useState("")
   const [responses, setResponses] = useState<Record<Domain, number | null>>({
     family: null,
