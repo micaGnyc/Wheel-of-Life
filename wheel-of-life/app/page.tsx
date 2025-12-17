@@ -95,6 +95,88 @@ const satisfactionOptions = [
 ]
 
 export default function LifeSatisfactionAssessment() {
+  const [report, setReport] = useState("")
+const [isGenerating, setIsGenerating] = useState(false)
+const generateReport = async () => {
+  setIsGenerating(true)
+  
+  // Build wheel data with descriptors
+  const descriptorMap: Record<number, string> = {
+    1: "Terrible",
+    2: "Unhappy", 
+    3: "Mostly Dissatisfied",
+    4: "Mixed",
+    5: "Mostly Satisfied",
+    6: "Pleased",
+    7: "Delighted"
+  }
+  
+  const wheelData: Record<string, {score: number, descriptor: string}> = {}
+  
+  // Add standard areas
+  questions.forEach(q => {
+    if (q.domain !== "overall" && !notApplicable[q.domain]) {
+      const score = responses[q.domain] || 0
+      wheelData[q.label] = {
+        score,
+        descriptor: descriptorMap[score] || "Not rated"
+      }
+    }
+  })
+  
+  // Add custom area if exists
+  if (customArea.name && customArea.score) {
+    wheelData[customArea.name] = {
+      score: customArea.score,
+      descriptor: descriptorMap[customArea.score] || "Not rated"
+    }
+  }
+  
+  // Build deep dive with area labels
+  const deepDiveWithLabels: Record<string, {why: string, whatBetter: string}> = {}
+  focusAreas.forEach(areaKey => {
+    const area = areaKey === "custom" 
+      ? customArea.name 
+      : questions.find(q => q.domain === areaKey)?.label || areaKey
+    deepDiveWithLabels[area] = deepDive[areaKey]
+  })
+  
+  // Get age range
+  const ageNum = parseInt(age)
+  const ageRange = ageNum <= 17 ? "16-17" : ageNum <= 21 ? "18-21" : "22-24"
+  
+  try {
+    const response = await fetch("/api/generate-report", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        age_range: ageRange,
+        wheel_data: wheelData,
+        what_matters: whatMatters.map(key => 
+          key === "custom" ? customArea.name : questions.find(q => q.domain === key)?.label || key
+        ),
+        focus_areas: focusAreas.map(key =>
+          key === "custom" ? customArea.name : questions.find(q => q.domain === key)?.label || key
+        ),
+        deep_dive: deepDiveWithLabels
+      })
+    })
+    
+    const data = await response.json()
+    
+    if (data.success) {
+      setReport(data.report)
+      setShowReport(true)
+    } else {
+      alert("Failed to generate report. Please try again.")
+    }
+  } catch (error) {
+    console.error("Error:", error)
+    alert("Failed to generate report. Please try again.")
+  } finally {
+    setIsGenerating(false)
+  }
+}
   const [customArea, setCustomArea] = useState<{name: string, score: number | null}>({name: "", score: null})
   const [whatMatters, setWhatMatters] = useState<string[]>([])
   const [focusAreas, setFocusAreas] = useState<string[]>([])
@@ -784,14 +866,15 @@ const endAngle = startAngle + segmentAngle
 
               {/* Generate Report Button */}
               <div className="text-center">
-                <Button
-                  onClick={() => setShowReport(true)}
-                  disabled={focusAreas.length === 0 || whatMatters.length === 0}
-                  size="lg"
-                  className="bg-accent px-12 text-lg font-semibold text-accent-foreground shadow-lg hover:bg-accent/90"
-                >
-                  Generate My Report
-                </Button>
+              <Button
+  onClick={generateReport}
+  disabled={focusAreas.length === 0 || whatMatters.length === 0 || isGenerating}
+  size="lg"
+  className="bg-accent px-12 text-lg font-semibold text-accent-foreground shadow-lg hover:bg-accent/90"
+>
+  {isGenerating ? "Generating..." : "Generate My Report"}
+</Button>
+
                 {(focusAreas.length === 0 || whatMatters.length === 0) && (
                   <p className="mt-2 text-sm text-muted-foreground">
                     Please select what matters and what you want to work on
@@ -800,15 +883,37 @@ const endAngle = startAngle + segmentAngle
               </div>
             </div>
           ) : (
-            /* Report Section - placeholder for now */
-            <div className="rounded-xl bg-card p-6 text-center md:p-8">
-              <h3 className="mb-4 text-xl font-semibold">Your Personalized Report</h3>
-              <p className="text-muted-foreground">
-                Report will be generated here using Claude AI...
-              </p>
-              {/* We'll add the actual report display in the next step */}
+            /* Report Section */
+            <div className="rounded-xl bg-card p-6 md:p-8">
+              <h3 className="mb-6 text-center text-xl font-semibold">Your Personalized Report</h3>
+              <div className="prose prose-sm max-w-none text-card-foreground">
+                {report.split('\n').map((paragraph, index) => {
+                  if (paragraph.startsWith('## ')) {
+                    return <h2 key={index} className="mt-6 mb-3 text-lg font-bold">{paragraph.replace('## ', '')}</h2>
+                  } else if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
+                    return <p key={index} className="font-semibold mt-4">{paragraph.replace(/\*\*/g, '')}</p>
+                  } else if (paragraph.trim() === '') {
+                    return null
+                  } else {
+                    return <p key={index} className="mb-3">{paragraph}</p>
+                  }
+                })}
+              </div>
+              
+              <div className="mt-8 text-center">
+                <Button
+                  onClick={() => {
+                    setShowReport(false)
+                    setReport("")
+                  }}
+                  variant="outline"
+                >
+                  Back to Questions
+                </Button>
+              </div>
             </div>
           )}
+          
 
         </Card>
       </div>
