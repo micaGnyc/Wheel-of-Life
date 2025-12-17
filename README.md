@@ -1,11 +1,12 @@
-# 🎡 Wheel of Life - Life Satisfaction Assessment
-
-A beautiful, interactive life satisfaction assessment tool that helps users (ages 16-24) visualize their life satisfaction across different life domains. Built with Next.js 16, React 19, and Tailwind CSS.
+# 🎡 Wheel of Life - Life Satisfaction Assessment for Future Coach
+An interactive life satisfaction assessment tool that helps users visualize their life satisfaction across different life domains through a wheel of life exercise. Built with Next.js 16, React 19, and Tailwind CSS.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-06B6D4?style=flat-square&logo=tailwindcss)
+- Claude AI (for report generation)
+
 
 ## ✨ Features
 
@@ -17,10 +18,12 @@ A beautiful, interactive life satisfaction assessment tool that helps users (age
   - 🏠 Living Space
   - 💭 Self
   - ✨ Overall Life
-
+- **Custom Life Areas** - Add your own area to track
+- **Prioritization Questions** - Identify what matters most and where to focus
 - **Visual Results** - See your responses displayed as an animated wheel chart
 - **Responsive Design** - Works beautifully on desktop and mobile devices
 - **Accessible** - Built with accessibility in mind using Radix UI components
+- **AI-Powered Report** - Personalized coaching insights (coming soon)
 
 ## 🚀 Getting Started
 
@@ -128,6 +131,9 @@ wheel-of-life/
 - **Icons**: [Lucide React](https://lucide.dev/)
 - **Forms**: [React Hook Form](https://react-hook-form.com/) with Zod validation
 - **Language**: [TypeScript 5](https://www.typescriptlang.org/)
+
+## Live Demo
+https://wheel-of-life-e3wnfqgn7-micaela-8510s-projects.vercel.app/
 
 ## 📄 License
 
