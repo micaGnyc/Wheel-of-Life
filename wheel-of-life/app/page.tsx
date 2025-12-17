@@ -522,8 +522,9 @@ const [optionalNotes, setOptionalNotes] = useState("")
     question: `My satisfaction with ${customArea.name.toLowerCase()}`
   }] : [])
 ].map((q, index, arr) => {
-const score = q.domain === "custom" ? (customArea.score || 0) : (responses[q.domain] || 0)
-const percentage = score / 7
+  const score = q.domain === "custom" ? (customArea.score || 0) : (responses[q.domain as Domain] || 0)
+
+  const percentage = score / 7
 const segmentAngle = 360 / arr.length
 const startAngle = index * segmentAngle - 90
 const endAngle = startAngle + segmentAngle
