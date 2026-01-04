@@ -246,49 +246,56 @@ const [optionalNotes, setOptionalNotes] = useState("")
   return (
 <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
   
-  {/* Hero Section */}
-  <section className="relative flex min-h-screen flex-col items-center justify-center px-4 py-12">
-    <div className="mx-auto max-w-4xl text-center">
-      
-      <div className="flex flex-col items-center gap-3 mb-8">
-        <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg">
-          <svg viewBox="0 0 24 24" className="h-16 w-16" fill="none">
-            <circle cx="12" cy="12" r="11" fill="white" opacity="0.2" />
-            <path
-              d="M12 6 L12 18 M8 10 L12 6 L16 10"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
-        <div className="inline-block rounded-full bg-primary/10 px-8 py-3 text-lg font-semibold text-primary">
-          Future Coach
-        </div>
-      </div>
-      
-      <h1 className="mb-6 text-balance font-sans text-5xl font-bold tracking-tight text-foreground md:text-7xl">
-        Wheel of Life
-      </h1>
+ {/* Hero Section */}
+<section className="relative flex min-h-screen flex-col items-center justify-center px-4 py-12">
+  <div className="mx-auto max-w-4xl text-center">
+    
+    <div className="flex flex-col items-center gap-2 mb-8">
+      <svg viewBox="0 0 100 100" className="h-20 w-20" fill="none">
+        <circle cx="50" cy="50" r="42" stroke="#4A9FE8" strokeWidth="7" fill="none"/>
+        <path
+          d="M50 72 L50 32 M32 52 L50 28 L68 52"
+          stroke="#4A9FE8"
+          strokeWidth="7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+        />
+      </svg>
+      <span className="text-base font-bold tracking-wider text-foreground">
+        FUTURE COACH
+      </span>
+    </div>
 
 
-          <p className="mb-12 text-pretty text-xl text-muted-foreground md:text-2xl">See Where You Are, Choose Where You're Going</p>
-          <div className="mx-auto mb-8 max-w-2xl text-left">
-  <p className="mb-4 text-lg font-semibold">A couple things to know before you start:</p>
-  
+      
+    <h1 className="mb-4 text-4xl font-bold tracking-tight text-foreground md:text-5xl">
+  Wheel of Life
+</h1>
+
+<p className="mb-8 text-lg text-muted-foreground">
+  See Where You Are, Choose Where You're Going
+</p>
+
+<div className="mx-auto mb-8 max-w-2xl text-left">
   <p className="mb-4 text-base text-muted-foreground">
-    <strong>This is about how happy *you* are, not how well others think you're doing.</strong> For example, you might be succeeding in school—getting good grades—but still feel unsatisfied with your overall school experience. Or you might be just barely passing but have found your calling in theater and feel very satisfied with school. We want to capture how you actually feel—not how you think you "should" feel.
+    The <span className="font-semibold text-[#4A9FE8]">Wheel of Life</span> is a coaching tool that helps you see how satisfied you are across different areas of your life—and where you might want to focus next.
   </p>
   
-  <p className="mb-8 text-base text-muted-foreground">
-    <strong>This is a snapshot of right now.</strong> Not a report card on your whole life. Just where you are today. Your wheel will change over time—that's the point! This is your starting point.
+  <p className="mb-3 px-6 text-sm text-muted-foreground">
+    <strong className="text-[#4A9FE8]">Rate your satisfaction, not your success.</strong> You might be doing "well" by external standards but still feel unsatisfied—or vice versa. We want how you actually feel.
+  </p>
+  
+  <p className="mb-6 px-6 text-sm text-muted-foreground">
+    <strong className="text-[#4A9FE8]">This is a snapshot of right now.</strong> Your wheel will change over time—that's the point!
   </p>
   
   <p className="text-base text-muted-foreground">
-    Ready? Let's start with your age.
+    <strong className="text-[#4A9FE8]">Ready?</strong> Let's get started with a little about you!
   </p>
 </div>
+
+
           <Card className="mx-auto mb-8 max-w-md bg-card/80 p-8 shadow-lg backdrop-blur-sm">
             <Label htmlFor="age" className="mb-2 block text-left text-sm font-medium">
               What's your age? (16-24)
@@ -419,10 +426,9 @@ const [optionalNotes, setOptionalNotes] = useState("")
           </h2>
           <div className="mb-12 rounded-xl bg-card/50 p-6 text-center backdrop-blur-sm">
             <p className="text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
-              Think about your life during the past several weeks. Think about how you spend each day and night, and
-              then think about how your life has been most of this time. Indicate how satisfied you are with each area
-              of life.
-            </p>
+            Think about your life over the past several weeks—how you spend each day and night, and how your life has been most of this time.
+
+            For each area below, rate how satisfied you are—from <strong>Terrible</strong> to <strong>Delighted</strong>.            </p>
           </div>
 
           <div className="space-y-8">
