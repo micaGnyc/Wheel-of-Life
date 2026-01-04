@@ -96,6 +96,7 @@ const satisfactionOptions = [
 
 export default function LifeSatisfactionAssessment() {
   const [report, setReport] = useState("")
+  const [hasStarted, setHasStarted] = useState(false)
 const [isGenerating, setIsGenerating] = useState(false)
 const generateReport = async () => {
   setIsGenerating(true)
@@ -399,13 +400,24 @@ const [optionalNotes, setOptionalNotes] = useState("")
       </div>
     </>
   )}
-            <Button
-              onClick={scrollToAssessment}
-              size="lg"
-              className="w-full bg-primary text-lg font-semibold text-primary-foreground hover:bg-primary/90"
-            >
-              Start Exercise
-            </Button>
+          <Button
+  onClick={() => {
+    setHasStarted(true)
+    scrollToAssessment()
+  }}
+  size="lg"
+  className="w-full bg-primary text-lg font-semibold text-primary-foreground hover:bg-primary/90"
+  disabled={!age || !gender.length || !ethnicity.length}
+>
+  Start Exercise
+</Button>
+
+{(!age || !gender.length || !ethnicity.length) && (
+  <p className="mt-2 text-sm text-muted-foreground">
+    Please complete all fields above
+  </p>
+)}
+
           </Card>
 
           <button
@@ -419,6 +431,7 @@ const [optionalNotes, setOptionalNotes] = useState("")
       </section>
 
       {/* Assessment Section */}
+      {hasStarted && (
       <section id="assessment" className="px-4 py-20">
         <div className="mx-auto max-w-4xl">
           <h2 className="mb-4 text-center text-3xl font-bold text-foreground md:text-4xl">
@@ -570,7 +583,7 @@ const [optionalNotes, setOptionalNotes] = useState("")
           </div>
         </div>
       </section>
-
+)}
       {/* Results Section */}
       {showResults && (
         <section id="results" className="px-4 py-20">
@@ -757,7 +770,7 @@ const endAngle = startAngle + segmentAngle
               {/* Q2: What Matters Most */}
               <div className="rounded-xl bg-card p-6 md:p-8">
                 <h3 className="mb-4 text-lg font-semibold">Which areas matter most to you right now?</h3>
-                <p className="mb-4 text-sm text-muted-foreground">Select 2-3 areas</p>
+                <p className="mb-4 text-sm text-muted-foreground">Select 1-2 areas</p>
                 <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
                   {[
                     ...questions.filter(q => q.domain !== "overall" && !notApplicable[q.domain]),
@@ -768,9 +781,10 @@ const endAngle = startAngle + segmentAngle
                       onClick={() => {
                         if (whatMatters.includes(q.domain)) {
                           setWhatMatters(whatMatters.filter(d => d !== q.domain))
-                        } else if (whatMatters.length < 3) {
+                        } else if (whatMatters.length < 2) {
                           setWhatMatters([...whatMatters, q.domain])
                         }
+                        
                       }}
                       className={`flex items-center gap-2 rounded-lg border-2 p-3 text-left transition-all ${
                         whatMatters.includes(q.domain)
