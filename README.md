@@ -85,7 +85,7 @@ Make sure you have the following installed:
    # or
    bun install
    ```
-   # Create environment file and add your ANTHROPIC_API_KEY
+   ### Create environment file and add your ANTHROPIC_API_KEY
 cp .env.example .env.local
 
 ### Running the Development Server
