@@ -107,10 +107,6 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-Environment Variables
-Variable	Description
-ANTHROPIC_API_KEY	Your Anthropic API key for Claude
-
 ### Building for Production
 
 Create an optimized production build:
