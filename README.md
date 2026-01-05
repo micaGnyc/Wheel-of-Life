@@ -89,6 +89,7 @@ Make sure you have the following installed:
  
     ```bash
     cp .env.example .env.local
+    ```
 
 ### Running the Development Server
 
