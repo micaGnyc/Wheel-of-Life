@@ -2,13 +2,14 @@
 A personalized life satisfaction assessment tool and Wheel of Life coaching exercise with AI-generated coaching reports, built for Future Coach.
 
 **Live Demo:** https://wheel-of-life-tau.vercel.app/
- Built with Next.js 16, React 19, and Tailwind CSS.
+
+ Built with Next.js 16, React 19, and Tailwind CSS and Claude AI (for report generation)
+
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-06B6D4?style=flat-square&logo=tailwindcss)
-- Claude AI (for report generation)
 
 ## About
 
