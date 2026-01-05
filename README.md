@@ -61,11 +61,11 @@ Make sure you have the following installed:
 
 ### Installation
 
-1. **Clone the repository** (if you haven't already):
+1. **Clone the repository** 
 
    ```bash
-   git clone <repository-url>
-   cd Wheel-of-Life
+   git clone https://github.com/micaGnyc/Wheel-of-Life.git
+   cd Wheel-of-Life/wheel-of-life
    ```
 
 2. **Navigate to the app directory**:
@@ -85,6 +85,8 @@ Make sure you have the following installed:
    # or
    bun install
    ```
+   # Create environment file and add your ANTHROPIC_API_KEY
+cp .env.example .env.local
 
 ### Running the Development Server
 
@@ -101,6 +103,10 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+
+Environment Variables
+Variable	Description
+ANTHROPIC_API_KEY	Your Anthropic API key for Claude
 
 ### Building for Production
 
@@ -127,25 +133,29 @@ npm run lint
 ## 📁 Project Structure
 
 ```
-wheel-of-life/
-├── app/
-│   ├── page.tsx        # Main assessment page
-│   ├── layout.tsx      # Root layout
-│   ├── globals.css     # Global styles
-│   └── favicon.ico
-├── components/
-│   └── ui/             # Reusable UI components (shadcn/ui)
-│       ├── button.tsx
-│       ├── card.tsx
-│       ├── checkbox.tsx
-│       ├── input.tsx
-│       └── label.tsx
-├── lib/
-│   └── utils.ts        # Utility functions
-├── public/             # Static assets
-├── package.json
-└── tsconfig.json
-```
+Wheel-of-Life/
+├── wheel-of-life/ # Next.js app
+│ ├── app/
+│ │ ├── page.tsx # Main assessment page
+│ │ ├── layout.tsx # Root layout
+│ │ ├── globals.css # Global styles
+│ │ └── api/
+│ │ └── generate-report/
+│ │ └── route.ts # Claude API integration
+│ ├── components/
+│ │ └── ui/ # Reusable UI components (shadcn/ui)
+│ │ ├── button.tsx
+│ │ ├── card.tsx
+│ │ ├── checkbox.tsx
+│ │ ├── input.tsx
+│ │ └── label.tsx
+│ ├── lib/
+│ │ └── utils.ts # Utility functions
+│ ├── public/ # Static assets
+│ ├── .env.local # API keys (not committed)
+│ ├── package.json
+│ └── tsconfig.json
+└── README.md
 
 ## 🛠️ Tech Stack
 
@@ -157,8 +167,7 @@ wheel-of-life/
 - **Forms**: [React Hook Form](https://react-hook-form.com/) with Zod validation
 - **Language**: [TypeScript 5](https://www.typescriptlang.org/)
 
-## Live Demo
-https://wheel-of-life-e3wnfqgn7-micaela-8510s-projects.vercel.app/
+## Live Demo: https://wheel-of-life-tau.vercel.app/
 
 ## 📄 License
 
