@@ -159,13 +159,14 @@ Wheel-of-Life/
 
 ## 🛠️ Tech Stack
 
-- **Framework**: [Next.js 16](https://nextjs.org/) with App Router
-- **UI Library**: [React 19](https://react.dev/)
-- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
-- **Components**: [shadcn/ui](https://ui.shadcn.com/) with Radix UI primitives
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Forms**: [React Hook Form](https://react-hook-form.com/) with Zod validation
-- **Language**: [TypeScript 5](https://www.typescriptlang.org/)
+- **Framework:** [Next.js 16](https://nextjs.org/) with App Router
+- **UI Library:** [React 19](https://react.dev/)
+- **Styling:** [Tailwind CSS 4](https://tailwindcss.com/)
+- **Components:** [shadcn/ui](https://ui.shadcn.com/) with Radix UI primitives
+- **Icons:** [Lucide React](https://lucide.dev/)
+- **Language:** [TypeScript 5](https://www.typescriptlang.org/)
+- **AI:** [Claude Sonnet 4.5](https://www.anthropic.com/) (Anthropic API)
+- **Deployment:** [Vercel](https://vercel.com/)
 
 ## Live Demo: https://wheel-of-life-tau.vercel.app/
 
