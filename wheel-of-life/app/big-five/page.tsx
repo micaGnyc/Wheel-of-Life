@@ -132,15 +132,23 @@ export default function BigFiveAssessment() {
   }  
 
   const handleSubmit = async () => {
+    console.log("handleSubmit called") 
+
     const unanswered = questions.filter(q => responses[q.id] === null)
+    console.log("Unanswered questions:", unanswered.length) 
+
     if (unanswered.length > 0) {
       setErrors([`Please answer all ${unanswered.length} remaining questions.`])
       return
     }
     
+    console.log("Proceeding to show results") 
     setErrors([])
     setShowResults(true)
-    setIsGenerating(true)
+    setTimeout(() => {
+      document.getElementById("results")?.scrollIntoView({ behavior: "smooth" })
+    }, 100)
+        setIsGenerating(true)
   
     const { sten: stenScores } = calculateScores()
     
@@ -245,11 +253,12 @@ export default function BigFiveAssessment() {
 
           {/* Start Button */}
           <Card className="mx-auto mb-8 max-w-md bg-card/80 p-8 shadow-lg backdrop-blur-sm">
-            <Button
-              onClick={() => {
-                setHasStarted(true)
-                scrollToAssessment()
-              }}
+          <Button
+  onClick={() => {
+    setHasStarted(true)
+    setTimeout(() => scrollToAssessment(), 100)
+  }}
+
               size="lg"
               className="w-full bg-primary text-lg font-semibold text-primary-foreground hover:bg-primary/90"
             >
@@ -439,31 +448,42 @@ export default function BigFiveAssessment() {
 
 
               {/* AI Report */}
-<div className="rounded-xl bg-card p-6 md:p-8">
-  <h3 className="mb-6 text-center text-xl font-semibold">Your Personalized Report</h3>
-  {isGenerating ? (
-    <p className="text-center text-muted-foreground">Generating your personalized report...</p>
-  ) : report ? (
-    <div className="prose prose-sm max-w-none text-card-foreground">
-      {report.split('\n').map((paragraph, index) => {
-        if (paragraph.startsWith('## ')) {
-          return <h2 key={index} className="mt-6 mb-3 text-lg font-bold">{paragraph.replace('## ', '')}</h2>
-        } else if (paragraph.startsWith('### ')) {
-          return <h3 key={index} className="mt-4 mb-2 text-base font-semibold">{paragraph.replace('### ', '')}</h3>
-        } else if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
-          return <p key={index} className="font-semibold mt-4">{paragraph.replace(/\*\*/g, '')}</p>
-        } else if (paragraph.trim() === '') {
-          return null
-        } else {
-          return <p key={index} className="mb-3">{paragraph}</p>
-        }
-      })}
-    </div>
-  ) : (
-    <p className="text-center text-muted-foreground">Your report will appear here.</p>
-  )}
-</div>
-
+              <div className="rounded-xl bg-card p-6 md:p-8">
+                <h3 className="mb-6 text-center text-xl font-semibold">Your Personalized Report</h3>
+                {isGenerating ? (
+                  <p className="text-center text-muted-foreground">Generating your personalized report...</p>
+                ) : report ? (
+                  <div className="prose prose-sm max-w-none text-card-foreground">
+                    {report
+                      .replace(/```math[\s\S]*?```/g, '')
+                      .split('\n')
+                      .map((paragraph, index) => {
+                        if (paragraph.startsWith('## ')) {
+                          return <h2 key={index} className="mt-6 mb-3 text-lg font-bold">{paragraph.replace('## ', '')}</h2>;
+                        }
+                        if (paragraph.startsWith('### ')) {
+                          return <h3 key={index} className="mt-4 mb-2 text-base font-semibold">{paragraph.replace('### ', '')}</h3>;
+                        }
+                        if (paragraph.includes('**')) {
+                          const parts = paragraph.split(/\*\*([^*]+)\*\*/g);
+                          return (
+                            <p key={index} className="mb-3">
+                              {parts.map((part, i) =>
+                                i % 2 === 1 ? <strong key={i}>{part}</strong> : part
+                              )}
+                            </p>
+                          );
+                        }
+                        if (paragraph.trim() === '') {
+                          return null;
+                        }
+                        return <p key={index} className="mb-3">{paragraph}</p>;
+                      })}
+                  </div>
+                ) : (
+                  <p className="text-center text-muted-foreground">Your report will appear here.</p>
+                )}
+              </div>
 
             </Card>
           </div>
@@ -472,3 +492,4 @@ export default function BigFiveAssessment() {
     </main>
   )
 }
+

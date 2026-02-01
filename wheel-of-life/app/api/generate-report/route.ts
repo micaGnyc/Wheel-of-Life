@@ -149,6 +149,7 @@ Strategic synthesis:
 ## Step 2: Generate the Report (user-facing)
 
 Target 2,600–3,400 characters. HARD MAX 3,800.
+If a name is provided, use it naturally 1-2 times in the report (e.g., "Sarah, your wheel shows..." or at the start of a section). Don't overuse it.
 
 ### Section 1: Your Wheel of Life (short)
 - Warm welcome (1–2 sentences)
@@ -243,7 +244,8 @@ export async function POST(request: NextRequest) {
     // Format the user data into a prompt
     const userPrompt = `Generate a personalized Wheel of Life coaching report for this person:
 
-AGE RANGE: ${data.age_range}
+  NAME: ${data.first_name || ""}
+    AGE RANGE: ${data.age_range}
 
 WHEEL DATA:
 ${Object.entries(data.wheel_data)
