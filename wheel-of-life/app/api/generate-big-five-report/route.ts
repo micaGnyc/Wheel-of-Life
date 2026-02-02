@@ -13,6 +13,7 @@ export async function POST(request: NextRequest) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        first_name: data.first_name,
         scores: data.scores,
         openEnded: data.openEnded,
         age: data.age

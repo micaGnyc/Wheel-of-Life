@@ -79,7 +79,25 @@ const responseOptions = [
   { value: 5, label: "Strongly Agree" },
 ]
 
-export default function BigFiveAssessment() {
+interface BigFiveProps {
+  email: string
+  firstName: string
+  age: string
+  gender: string[]
+  ethnicity: string[]
+  optionalNotes: string
+  onComplete: (data: any) => void
+}
+
+export default function BigFiveQuiz({
+  email,
+  firstName,
+  age,
+  gender,
+  ethnicity,
+  optionalNotes,
+  onComplete,
+}: BigFiveProps) {
   const [hasStarted, setHasStarted] = useState(false)
   const [responses, setResponses] = useState<Record<number, number | null>>(
     Object.fromEntries(questions.map(q => [q.id, null]))
@@ -93,6 +111,7 @@ export default function BigFiveAssessment() {
   const [report, setReport] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
   const [errors, setErrors] = useState<string[]>([])
+  const [loadingMessage, setLoadingMessage] = useState("")
 
   const handleResponseChange = (questionId: number, value: number) => {
     setResponses(prev => ({ ...prev, [questionId]: value }))
@@ -132,37 +151,49 @@ export default function BigFiveAssessment() {
   }  
 
   const handleSubmit = async () => {
-    console.log("handleSubmit called") 
-
     const unanswered = questions.filter(q => responses[q.id] === null)
-    console.log("Unanswered questions:", unanswered.length) 
-
+  
     if (unanswered.length > 0) {
       setErrors([`Please answer all ${unanswered.length} remaining questions.`])
       return
     }
-    
-    console.log("Proceeding to show results") 
+  
     setErrors([])
     setShowResults(true)
     setTimeout(() => {
       document.getElementById("results")?.scrollIntoView({ behavior: "smooth" })
     }, 100)
-        setIsGenerating(true)
-  
-    const { sten: stenScores } = calculateScores()
-    
-    // Get age (TODO: Get from shared demographics later)
-    const userAge = 20
+    setIsGenerating(true)
+setLoadingMessage("Analyzing your responses...")
+
+const { raw: rawScores, sten: stenScores } = calculateScores()
+
+// Rotate loading messages
+const messages = [
+  "Analyzing your responses...",
+  "Building your personality profile...",
+  "Connecting to research insights...",
+  "Identifying your unique patterns...",
+  "Crafting personalized recommendations...",
+  "Generating your detailed report...",
+  "Adding finishing touches...",
+  "Almost there..."
+]
+let messageIndex = 0
+const messageInterval = setInterval(() => {
+  messageIndex = (messageIndex + 1) % messages.length
+  setLoadingMessage(messages[messageIndex])
+}, 5000)
   
     try {
       const response = await fetch("/api/generate-big-five-report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          first_name: firstName,
           scores: stenScores,
           openEnded: openEnded,
-          age: userAge
+          age: age
         })
       })
   
@@ -170,6 +201,7 @@ export default function BigFiveAssessment() {
   
       if (data.success) {
         setReport(data.report)
+        
       } else {
         setReport("Failed to generate report. Please try again.")
       }
@@ -177,10 +209,12 @@ export default function BigFiveAssessment() {
       console.error("Error:", error)
       setReport("Failed to generate report. Please try again.")
     } finally {
+      clearInterval(messageInterval)
       setIsGenerating(false)
+      setLoadingMessage("")
     }
-  }  
-  
+    
+  }
 
   const traitNames: Record<string, string> = {
     E: "Extraversion",
@@ -340,7 +374,7 @@ export default function BigFiveAssessment() {
                   To make your report even more personalized and useful, we'd love to hear from you in your own words.
                 </p>
                 <p className="mb-2 text-sm text-white/80">
-                  These questions are <strong>optional</strong> but will help us provide insights most relevant to YOUR specific situation and goals.
+                  These questions help us provide insights most relevant to YOUR specific situation and goals.
                 </p>
                 <p className="text-sm text-white/80 italic">
                   Feel free to offer as much or as little as you want (we've found the sweet spot to be 3-5 sentences).
@@ -451,7 +485,8 @@ export default function BigFiveAssessment() {
               <div className="rounded-xl bg-card p-6 md:p-8">
                 <h3 className="mb-6 text-center text-xl font-semibold">Your Personalized Report</h3>
                 {isGenerating ? (
-                  <p className="text-center text-muted-foreground">Generating your personalized report...</p>
+  <p className="text-center text-muted-foreground">{loadingMessage || "Generating your personalized report..."}</p>
+
                 ) : report ? (
                   <div className="prose prose-sm max-w-none text-card-foreground">
                     {report
@@ -480,12 +515,33 @@ export default function BigFiveAssessment() {
                         return <p key={index} className="mb-3">{paragraph}</p>;
                       })}
                   </div>
-                ) : (
-                  <p className="text-center text-muted-foreground">Your report will appear here.</p>
-                )}
-              </div>
+                             ) : (
+                              <p className="text-center text-muted-foreground">Your report will appear here.</p>
+                            )}
+                            
+                            {/* Continue button - only show when report is loaded */}
+                            {report && !isGenerating && (
+                              <div className="mt-8 text-center">
+                               <Button
+  onClick={() => onComplete({
+    rawResponses: responses,
+    rawScores: calculateScores().raw,
+    stenScores: calculateScores().sten,
+    openEnded,
+    report,
+  })}
+  size="lg"
+  className="bg-primary text-primary-foreground"
+>
+  Continue to Feedback
+</Button>
 
-            </Card>
+                              </div>
+                            )}
+                          </div>
+              
+                        </Card>
+              
           </div>
         </section>
       )}

@@ -190,36 +190,11 @@ const generateReport = async () => {
     if (data.success) {
       setReport(data.report)
       setShowReport(true)
-       // Log to Google Sheets
-  try {
-    await fetch("/api/log-to-sheets", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: "", // TODO: Add from landing page
-        name: "", // TODO: Add from landing page
-        age,
-        gender,
-        ethnicity,
-        optionalNotes,
-        responses,
-        customArea,
-        whatMatters,
-        focusAreas,
-        deepDive,
-        report: data.report,
-      })
-    })
-  } catch (error) {
-    console.error("Failed to log to sheets:", error)
-  }
-
+      
+      
     } else {
       alert("Failed to generate report. Please try again.")
     }
-  } catch (error) {
-    console.error("Error:", error)
-    alert("Failed to generate report. Please try again.")
   } finally {
     setIsGenerating(false)
   }
@@ -839,16 +814,22 @@ const endAngle = startAngle + segmentAngle
               </div>
               
               <div className="mt-8 text-center">
-                <Button
-                  onClick={() => {
-                    setShowReport(false)
-                    setReport("")
-                  }}
-                  variant="outline"
-                >
-                  Back to Questions
-                </Button>
-              </div>
+  <Button
+    onClick={() => onComplete({
+      responses,
+      customArea,
+      whatMatters,
+      focusAreas,
+      deepDive,
+      report,
+    })}
+    size="lg"
+    className="bg-primary text-primary-foreground"
+  >
+    Continue to Feedback
+  </Button>
+</div>
+
             </div>
           )}
           
