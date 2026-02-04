@@ -250,7 +250,7 @@ export default function BigFiveQuiz({
         // Main heading (# ) - centered
         if (paragraph.startsWith('# ')) {
           return (
-            <h2 key={index} className="mt-2 mb-4 text-2xl font-bold text-primary text-center">
+            <h2 key={index} className="mt-2 mb-4 text-2xl font-bold text-black text-center">
               {paragraph.replace('# ', '')}
             </h2>
           )
