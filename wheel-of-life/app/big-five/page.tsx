@@ -243,12 +243,14 @@ export default function BigFiveQuiz({
       // Remove leftover code fences
       .replace(/```\[\d+\]/g, '')
       .replace(/```math\d+```\([^)]+\)/g, '')
+      // Remove markdown bold asterisks
+      .replace(/\*\*/g, '')
       .split('\n')
       .map((paragraph: string, index: number) => {
-        // Main heading (# )
+        // Main heading (# ) - centered
         if (paragraph.startsWith('# ')) {
           return (
-            <h2 key={index} className="mt-2 mb-4 text-xl font-bold text-primary">
+            <h2 key={index} className="mt-2 mb-4 text-2xl font-bold text-primary text-center">
               {paragraph.replace('# ', '')}
             </h2>
           )
@@ -272,17 +274,6 @@ export default function BigFiveQuiz({
         // Horizontal rule (---)
         if (paragraph.trim() === '---' || paragraph.trim() === '***' || paragraph.trim() === '___') {
           return <hr key={index} className="my-6 border-t border-border" />
-        }
-        // Bold text
-        if (paragraph.includes('**')) {
-          const parts = paragraph.split(/\*\*([^*]+)\*\*/g)
-          return (
-            <p key={index} className="mb-3">
-              {parts.map((part: string, i: number) =>
-                i % 2 === 1 ? <strong key={i}>{part}</strong> : part
-              )}
-            </p>
-          )
         }
         // Skip empty lines
         if (paragraph.trim() === '') {

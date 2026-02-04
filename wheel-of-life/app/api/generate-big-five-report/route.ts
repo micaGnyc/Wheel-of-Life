@@ -21,9 +21,11 @@ export async function POST(request: NextRequest) {
     })
 
     const result = await response.json()
+    console.log("Cassidy response:", JSON.stringify(result, null, 2))
+
 
     // Extract report from Cassidy response
-    const report = result?.workflowRun?.actionResults?.[0]?.output || ""
+    const report = result?.workflowRun?.actionResults?.[2]?.output || ""
 
     return NextResponse.json({ success: true, report })
   } catch (error) {
