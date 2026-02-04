@@ -86,16 +86,12 @@ interface BigFiveProps {
   gender: string[]
   ethnicity: string[]
   optionalNotes: string
-  onComplete: (data: any) => void
+  onComplete: (data: unknown) => void
 }
 
 export default function BigFiveQuiz({
-  email,
   firstName,
   age,
-  gender,
-  ethnicity,
-  optionalNotes,
   onComplete,
 }: BigFiveProps) {
   const [hasStarted, setHasStarted] = useState(false)
@@ -164,26 +160,26 @@ export default function BigFiveQuiz({
       document.getElementById("results")?.scrollIntoView({ behavior: "smooth" })
     }, 100)
     setIsGenerating(true)
-setLoadingMessage("Analyzing your responses...")
+    setLoadingMessage("Analyzing your responses...")
 
-const { raw: rawScores, sten: stenScores } = calculateScores()
+    const { sten: stenScores } = calculateScores()
 
-// Rotate loading messages
-const messages = [
-  "Analyzing your responses...",
-  "Building your personality profile...",
-  "Connecting to research insights...",
-  "Identifying your unique patterns...",
-  "Crafting personalized recommendations...",
-  "Generating your detailed report...",
-  "Adding finishing touches...",
-  "Almost there..."
-]
-let messageIndex = 0
-const messageInterval = setInterval(() => {
-  messageIndex = (messageIndex + 1) % messages.length
-  setLoadingMessage(messages[messageIndex])
-}, 5000)
+    // Rotate loading messages
+    const messages = [
+      "Analyzing your responses...",
+      "Building your personality profile...",
+      "Connecting to research insights...",
+      "Identifying your unique patterns...",
+      "Crafting personalized recommendations...",
+      "Generating your detailed report...",
+      "Adding finishing touches...",
+      "Almost there..."
+    ]
+    let messageIndex = 0
+    const messageInterval = setInterval(() => {
+      messageIndex = (messageIndex + 1) % messages.length
+      setLoadingMessage(messages[messageIndex])
+    }, 5000)
   
     try {
       const response = await fetch("/api/generate-big-five-report", {
@@ -232,7 +228,70 @@ const messageInterval = setInterval(() => {
     O: "#8B5CF6",
   }
 
-  const { raw: rawScores, sten: stenScores } = calculateScores()
+  const { sten: stenScores } = calculateScores()
+
+  const renderReport = (reportText: string) => {
+    return reportText
+      // Remove all code blocks of the form ```math ... ```
+      .replace(/```math[\s\S]*?```/g, '')
+      // Remove blocks of the form ```math[...]```$$https://...$$
+      .replace(/```math\s*\[\d+\]\s*```\$\$https?:\/\/[^\$]+\$\$/g, '')
+      // Remove blocks of the form ```math[...]```
+      .replace(/```math\s*\[\d+\]\s*```/g, '')
+      // Remove blocks of the form ```math\d+```$$...$$
+      .replace(/```math\s*\d+\s*```\$\$[^\$]+\$\$/g, '')
+      // Remove leftover code fences
+      .replace(/```\[\d+\]/g, '')
+      .replace(/```math\d+```\([^)]+\)/g, '')
+      .split('\n')
+      .map((paragraph: string, index: number) => {
+        // Main heading (# )
+        if (paragraph.startsWith('# ')) {
+          return (
+            <h2 key={index} className="mt-2 mb-4 text-xl font-bold text-primary">
+              {paragraph.replace('# ', '')}
+            </h2>
+          )
+        }
+        // Subheading (## )
+        if (paragraph.startsWith('## ')) {
+          return (
+            <h3 key={index} className="mt-6 mb-3 text-lg font-bold">
+              {paragraph.replace('## ', '')}
+            </h3>
+          )
+        }
+        // Sub-subheading (### )
+        if (paragraph.startsWith('### ')) {
+          return (
+            <h4 key={index} className="mt-4 mb-2 text-base font-semibold">
+              {paragraph.replace('### ', '')}
+            </h4>
+          )
+        }
+        // Horizontal rule (---)
+        if (paragraph.trim() === '---' || paragraph.trim() === '***' || paragraph.trim() === '___') {
+          return <hr key={index} className="my-6 border-t border-border" />
+        }
+        // Bold text
+        if (paragraph.includes('**')) {
+          const parts = paragraph.split(/\*\*([^*]+)\*\*/g)
+          return (
+            <p key={index} className="mb-3">
+              {parts.map((part: string, i: number) =>
+                i % 2 === 1 ? <strong key={i}>{part}</strong> : part
+              )}
+            </p>
+          )
+        }
+        // Skip empty lines
+        if (paragraph.trim() === '') {
+          return null
+        }
+        // Regular paragraph
+        return <p key={index} className="mb-3">{paragraph}</p>
+      })
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-muted">
@@ -277,22 +336,21 @@ const messageInterval = setInterval(() => {
             </p>
             
             <p className="mb-6 px-6 text-sm text-muted-foreground">
-              <strong className="text-[#4A9FE8]">Go with your gut.</strong> Don't overthink—your first instinct is usually the most accurate.
+              <strong className="text-[#4A9FE8]">Go with your gut.</strong> Don&apos;t overthink—your first instinct is usually the most accurate.
             </p>
             
             <p className="text-base text-muted-foreground">
-              <strong className="text-[#4A9FE8]">Ready?</strong> Let's get started!
+              <strong className="text-[#4A9FE8]">Ready?</strong> Let&apos;s get started!
             </p>
           </div>
 
           {/* Start Button */}
           <Card className="mx-auto mb-8 max-w-md bg-card/80 p-8 shadow-lg backdrop-blur-sm">
-          <Button
-  onClick={() => {
-    setHasStarted(true)
-    setTimeout(() => scrollToAssessment(), 100)
-  }}
-
+            <Button
+              onClick={() => {
+                setHasStarted(true)
+                setTimeout(() => scrollToAssessment(), 100)
+              }}
               size="lg"
               className="w-full bg-primary text-lg font-semibold text-primary-foreground hover:bg-primary/90"
             >
@@ -368,22 +426,22 @@ const messageInterval = setInterval(() => {
             <div className="mt-12 space-y-6">
               <div className="mb-8 rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 p-6 text-center">
                 <h3 className="mb-4 text-2xl font-bold text-white">
-                  You've completed the personality assessment! 🎉
+                  You&apos;ve completed the personality assessment! 🎉
                 </h3>
                 <p className="mb-2 text-base text-white/90">
-                  To make your report even more personalized and useful, we'd love to hear from you in your own words.
+                  To make your report even more personalized and useful, we&apos;d love to hear from you in your own words.
                 </p>
                 <p className="mb-2 text-sm text-white/80">
                   These questions help us provide insights most relevant to YOUR specific situation and goals.
                 </p>
                 <p className="text-sm text-white/80 italic">
-                  Feel free to offer as much or as little as you want (we've found the sweet spot to be 3-5 sentences).
+                  Feel free to offer as much or as little as you want (we&apos;ve found the sweet spot to be 3-5 sentences).
                 </p>
               </div>
 
               <Card className="bg-card p-6 shadow-md">
                 <Label className="mb-2 block text-base font-medium">
-                  What's a personal strength or quality you're proud of?
+                  What&apos;s a personal strength or quality you&apos;re proud of?
                 </Label>
                 <textarea
                   value={openEnded.strength}
@@ -407,7 +465,7 @@ const messageInterval = setInterval(() => {
 
               <Card className="bg-card p-6 shadow-md">
                 <Label className="mb-2 block text-base font-medium">
-                  What's one goal you're working on or area of your life where you'd welcome some guidance?
+                  What&apos;s one goal you&apos;re working on or area of your life where you&apos;d welcome some guidance?
                 </Label>
                 <textarea
                   value={openEnded.goal}
@@ -452,100 +510,69 @@ const messageInterval = setInterval(() => {
                 Your Big Five Profile
               </h2>
               <p className="mb-8 text-center text-lg text-muted-foreground">
-                Here's how you scored on each personality dimension.
+                Here&apos;s how you scored on each personality dimension.
               </p>
 
-   {/* Bar Chart - STEN Scores */}
-<div className="mb-12 space-y-6">
-  {Object.entries(stenScores).map(([trait, sten]) => (
-    <div key={trait} className="space-y-2">
-      <div className="flex justify-between">
-        <span className="font-semibold text-foreground">
-          {traitNames[trait]}
-        </span>
-        <span className="text-muted-foreground">
-          {sten}/10 ({getStenDescription(sten)})
-        </span>
-      </div>
-      <div className="h-4 w-full rounded-full bg-muted">
-        <div
-          className="h-4 rounded-full transition-all duration-1000"
-          style={{
-            width: `${(sten / 10) * 100}%`,
-            backgroundColor: traitColors[trait]
-          }}
-        />
-      </div>
-    </div>
-  ))}
-</div>
-
+              {/* Bar Chart - STEN Scores */}
+              <div className="mb-12 space-y-6">
+                {Object.entries(stenScores).map(([trait, sten]) => (
+                  <div key={trait} className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="font-semibold text-foreground">
+                        {traitNames[trait]}
+                      </span>
+                      <span className="text-muted-foreground">
+                        {sten}/10 ({getStenDescription(sten)})
+                      </span>
+                    </div>
+                    <div className="h-4 w-full rounded-full bg-muted">
+                      <div
+                        className="h-4 rounded-full transition-all duration-1000"
+                        style={{
+                          width: `${(sten / 10) * 100}%`,
+                          backgroundColor: traitColors[trait]
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
 
               {/* AI Report */}
               <div className="rounded-xl bg-card p-6 md:p-8">
-                <h3 className="mb-6 text-center text-xl font-semibold">Your Personalized Report</h3>
                 {isGenerating ? (
-  <p className="text-center text-muted-foreground">{loadingMessage || "Generating your personalized report..."}</p>
-
+                  <p className="text-center text-muted-foreground">{loadingMessage || "Generating your personalized report..."}</p>
                 ) : report ? (
                   <div className="prose prose-sm max-w-none text-card-foreground">
-                    {report
-                      .replace(/```math[\s\S]*?```/g, '')
-                      .split('\n')
-                      .map((paragraph, index) => {
-                        if (paragraph.startsWith('## ')) {
-                          return <h2 key={index} className="mt-6 mb-3 text-lg font-bold">{paragraph.replace('## ', '')}</h2>;
-                        }
-                        if (paragraph.startsWith('### ')) {
-                          return <h3 key={index} className="mt-4 mb-2 text-base font-semibold">{paragraph.replace('### ', '')}</h3>;
-                        }
-                        if (paragraph.includes('**')) {
-                          const parts = paragraph.split(/\*\*([^*]+)\*\*/g);
-                          return (
-                            <p key={index} className="mb-3">
-                              {parts.map((part, i) =>
-                                i % 2 === 1 ? <strong key={i}>{part}</strong> : part
-                              )}
-                            </p>
-                          );
-                        }
-                        if (paragraph.trim() === '') {
-                          return null;
-                        }
-                        return <p key={index} className="mb-3">{paragraph}</p>;
-                      })}
+                    {renderReport(report)}
                   </div>
-                             ) : (
-                              <p className="text-center text-muted-foreground">Your report will appear here.</p>
-                            )}
-                            
-                            {/* Continue button - only show when report is loaded */}
-                            {report && !isGenerating && (
-                              <div className="mt-8 text-center">
-                               <Button
-  onClick={() => onComplete({
-    rawResponses: responses,
-    rawScores: calculateScores().raw,
-    stenScores: calculateScores().sten,
-    openEnded,
-    report,
-  })}
-  size="lg"
-  className="bg-primary text-primary-foreground"
->
-  Continue to Feedback
-</Button>
-
-                              </div>
-                            )}
-                          </div>
-              
-                        </Card>
-              
+                ) : (
+                  <p className="text-center text-muted-foreground">Your report will appear here.</p>
+                )}
+                
+                {/* Continue button - only show when report is loaded */}
+                {report && !isGenerating && (
+                  <div className="mt-8 text-center">
+                    <Button
+                      onClick={() => onComplete({
+                        rawResponses: responses,
+                        rawScores: calculateScores().raw,
+                        stenScores: calculateScores().sten,
+                        openEnded,
+                        report,
+                      })}
+                      size="lg"
+                      className="bg-primary text-primary-foreground"
+                    >
+                      Continue to Feedback
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </Card>
           </div>
         </section>
       )}
     </main>
   )
 }
-
